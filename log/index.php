@@ -203,28 +203,6 @@ if ($log !== null) {
 				color: #f00;
 				font-weight: bold;
 			}
-
-			/* timepicker format dropdown time * /
-			.ui_tpicker_time, .ui_tpicker_hour_label, .ui_tpicker_minute_label{
-				display: none;
-			}
-			.ui-timepicker-div dl dt.ui_tpicker_time_label{
-				display: inline-block;
-				float: none;
-			}
-			.ui-timepicker-div dl dd.ui_tpicker_hour{
-				margin: 0 0 0 20px;
-				display: inline-block;
-			}
-			.ui-timepicker-div dl dd.ui_tpicker_hour .ui_tpicker_hour_slider::after{
-				content: ":";
-				margin: 0 5px;
-			}
-			.ui-timepicker-div dl dd.ui_tpicker_minute{
-				margin: 0;
-				display: inline-block;
-			}
-			/* */
 		</style>
 	</head>
 	<body>
