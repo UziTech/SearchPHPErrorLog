@@ -1,41 +1,30 @@
 <?php
+
 /**
  * Get search terms separated by spaces from a search query
  * @param string $search 
- * @return array An array of the terms with positive terms having an index >= 0 and negative terms having an index < 0
+ * @return array An array of the terms with positive terms having an index > 0 and negative terms having an index < 0
  */
 function getSearchTerms($search) {
-	$csvTerms = str_getcsv($search, " ");
-	//search for -"x y" terms
-	$terms = array();
-	for ($i = 0; $i < count($csvTerms); $i++) {
-		$term = $csvTerms[$i];
-		if (substr($csvTerms[$i], 0, 2) === "-\"" && substr($csvTerms[$i], -1) !== "\"") {
-			for ($j = $i + 1; $j < count($csvTerms); $j++) {
-				$term .= " " . $csvTerms[$j];
-				if (substr($csvTerms[$j], -1) === "\"") {
-					$i = $j;
-					break;
-				}
-			}
+	$matches = null;
+	preg_match_all("/-?\"[^\"]+\"|-?'[^']+'|\S+/", $search, $matches);
+
+	// sort the terms
+	$terms = [];
+	foreach ($matches[0] as $i => $match) {
+		$negative = ("-" === $match[0]);
+		if ($negative) {
+			$match = substr($match, 1);
 		}
-		if ($term !== "") {
-			$terms[] = $term;
+		if (($match[0] === '"' && substr($match, -1) === '"') ||($match[0] === "'" && substr($match, -1) === "'")) {
+			$match = substr($match, 1, strlen($match) - 2);
 		}
+		$terms[($negative ? -($i + 1) : ($i + 1))] = $match;
 	}
-	//separate into positive and negative terms
-	foreach ($terms as $key => $term) {
-		if (substr($term, 0, 1) === "-" && strpos($search, "\"{$term}") === false) {
-			$term = substr($term, 1);
-			if (substr($term, 0, 1) === "\"" && substr($term, -1) === "\"") {
-				$term = substr($term, 1, strlen($term) - 2);
-			}
-			unset($terms[$key]);
-			$terms[-($key + 1)] = $term;
-		}
-	}
+
 	return $terms;
 }
+
 /**
  * Show logs from a file that matches a regular expression. Matches multiline records.
  * @param string $search [optional] A string or regular expression to match; default = ""
